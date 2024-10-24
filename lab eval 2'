@@ -1,0 +1,27 @@
+pip install pymongo
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+url = "https://myneta.info/Odisha2024/index.php?action=show_constituencies&state_id=23"
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+from pymongo import MongoClient
+client = MongoClient('mongodb://localhost:27017/')
+db = client['political_data']
+collection = db['candidates']
+
+collection.insert_many(df.to_dict('records'))
+bjp= collection.find({"Party": "BJP"})
+for candidate in bjp:
+    print(candidate)
+    
+illiterate_criminals = collection.count_documents({
+    "Education": "Illiterate",
+    "Criminal Cases": {"$gt": 0}
+})
+print(f"Number of illiterate candidates with criminal cases: {illiterate_criminals}")
+
+partc = collection.find({"Party": "BJP"}).sort("Age", 1)
+for candidate in partc:
+    print(candidate)
